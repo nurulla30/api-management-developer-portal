@@ -40,7 +40,7 @@ jobs:
       - name: 'Capture Content from Source (Dev) APIM'
         id: capture
         run: |
-          node ./scripts/v3/capture.js \
+          node ./scripts3/capture.js \
             --subscriptionId "${{ fromJson(secrets.AZURE_CREDENTIALS).subscriptionId }}" \
             --resourceGroupName "${{ secrets.RESOURCE_GROUP_NAME }}" \
             --serviceName "${{ secrets.APIM_SERVICE_NAME }}" \
@@ -86,7 +86,7 @@ jobs:
 
       - name: 'Generate Content to Destination APIM'
         run: |
-          node ./scripts/v3/generate.js \
+          node ./scripts3/generate.js \
             --subscriptionId "${{ fromJson(secrets.AZURE_CREDENTIALS).subscriptionId }}" \
             --resourceGroupName "${{ secrets.RESOURCE_GROUP_NAME }}" \
             --serviceName "${{ secrets.APIM_SERVICE_NAME }}" \
