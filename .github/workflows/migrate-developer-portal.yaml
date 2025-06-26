@@ -103,4 +103,3 @@ jobs:
         run: |
           echo "Migration scripts completed successfully."
           echo "Please go to the Azure Portal for the destination APIM and publish the changes to make them live."
-
