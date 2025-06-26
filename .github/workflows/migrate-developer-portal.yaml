@@ -17,37 +17,37 @@ jobs:
     outputs:
       artifact_name: portal-content-${{ github.run_id }}
     steps:
-      - name: Login to Azure
+      - name: 'Login to Azure'
         uses: azure/login@v2
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Checkout Developer Portal Scripts
+      - name: 'Checkout Developer Portal Scripts'
         uses: actions/checkout@v4
         with:
-          repository: nurulla30/api-management-developer-portal
-          path: portal-scripts
+          repository: 'nurulla30/api-management-developer-portal'
+          path: 'portal-scripts'
 
-      - name: Setup Node.js
+      - name: 'Setup Node.js'
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: '18'
 
-      - name: Install Dependencies
+      - name: 'Install Dependencies'
         run: npm install
         working-directory: ./portal-scripts
 
-      - name: Capture Content from Source (Dev) APIM
+      - name: 'Capture Content from Source (Dev) APIM'
         id: capture
         run: |
-          node ./scripts.v3/capture.js \
+          node ./scripts/v3/capture.js \
             --subscriptionId "${{ fromJson(secrets.AZURE_CREDENTIALS).subscriptionId }}" \
             --resourceGroupName "${{ secrets.RESOURCE_GROUP_NAME }}" \
             --serviceName "${{ secrets.APIM_SERVICE_NAME }}" \
             --folder "../dist"
         working-directory: ./portal-scripts
-
-      - name: Upload Portal Artifact
+        
+      - name: 'Upload Portal Artifact'
         uses: actions/upload-artifact@v4
         with:
           name: portal-content-${{ github.run_id }}
@@ -58,42 +58,43 @@ jobs:
     runs-on: ubuntu-latest
     environment: ${{ github.event.inputs.target_environment }}
     steps:
-      - name: Login to Azure
+      - name: 'Login to Azure'
         uses: azure/login@v2
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
-
-      - name: Checkout Developer Portal Scripts
+          
+      - name: 'Checkout Developer Portal Scripts'
         uses: actions/checkout@v4
         with:
-          repository: nurulla30/api-management-developer-portal
-          path: portal-scripts
+          repository: 'nurulla30/api-management-developer-portal'
+          path: 'portal-scripts'
 
-      - name: Setup Node.js
+      - name: 'Setup Node.js'
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: '18'
 
-      - name: Install Dependencies
+      - name: 'Install Dependencies'
         run: npm install
         working-directory: ./portal-scripts
 
-      - name: Download Portal Artifact
+      - name: 'Download Portal Artifact'
         uses: actions/download-artifact@v4
         with:
           name: ${{ needs.capture_from_dev.outputs.artifact_name }}
           path: ./dist
 
-      - name: Generate Content to Destination APIM
+      - name: 'Generate Content to Destination APIM'
         run: |
-          node ./scripts.v3/generate.js \
+          node ./scripts/v3/generate.js \
             --subscriptionId "${{ fromJson(secrets.AZURE_CREDENTIALS).subscriptionId }}" \
             --resourceGroupName "${{ secrets.RESOURCE_GROUP_NAME }}" \
             --serviceName "${{ secrets.APIM_SERVICE_NAME }}" \
             --folder "./dist"
         working-directory: ./portal-scripts
 
-      - name: Final Step: Manual Publish Required
+      - name: 'Final Step: Manual Publish Required'
         run: |
           echo "Migration scripts completed successfully."
           echo "Please go to the Azure Portal for the destination APIM and publish the changes to make them live."
+
