@@ -10,10 +10,6 @@ on:
         options:
           - qa
 
-permissions:
-  id-token: write
-  contents: read
-
 jobs:
   capture_from_dev:
     runs-on: ubuntu-latest
@@ -22,13 +18,9 @@ jobs:
       artifact_name: portal-content-${{ github.run_id }}
     steps:
       - name: 'Login to Azure'
-        uses: azure/login@v1
+        uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-          auth-type: SERVICE-PRINCIPAL
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: 'Checkout Developer Portal Scripts'
         uses: actions/checkout@v4
@@ -49,7 +41,7 @@ jobs:
         id: capture
         run: |
           node ./scripts/v3/capture.js \
-            --subscriptionId "${{ secrets.AZURE_SUBSCRIPTION_ID }}" \
+            --subscriptionId "${{ fromJson(secrets.AZURE_CREDENTIALS).subscriptionId }}" \
             --resourceGroupName "${{ secrets.RESOURCE_GROUP_NAME }}" \
             --serviceName "${{ secrets.APIM_SERVICE_NAME }}" \
             --folder "./dist"
@@ -67,14 +59,10 @@ jobs:
     environment: ${{ github.event.inputs.target_environment }}
     steps:
       - name: 'Login to Azure'
-        uses: azure/login@v1
+        uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-          auth-type: SERVICE-PRINCIPAL
-
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          
       - name: 'Checkout Developer Portal Scripts'
         uses: actions/checkout@v4
         with:
@@ -99,7 +87,7 @@ jobs:
       - name: 'Generate Content to Destination APIM'
         run: |
           node ./scripts/v3/generate.js \
-            --subscriptionId "${{ secrets.AZURE_SUBSCRIPTION_ID }}" \
+            --subscriptionId "${{ fromJson(secrets.AZURE_CREDENTIALS).subscriptionId }}" \
             --resourceGroupName "${{ secrets.RESOURCE_GROUP_NAME }}" \
             --serviceName "${{ secrets.APIM_SERVICE_NAME }}" \
             --folder "./dist"
@@ -109,3 +97,4 @@ jobs:
         run: |
           echo "Migration scripts completed successfully."
           echo "Please go to the Azure Portal for the destination APIM and publish the changes to make them live."
+
