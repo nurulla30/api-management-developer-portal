@@ -28,7 +28,7 @@ jobs:
           client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-          auth-type: SERVICE_PRINCIPAL
+          auth-type: SERVICE-PRINCIPAL
 
       - name: 'Checkout Developer Portal Scripts'
         uses: actions/checkout@v4
@@ -73,7 +73,7 @@ jobs:
           client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-          auth-type: SERVICE_PRINCIPAL
+          auth-type: SERVICE-PRINCIPAL
 
       - name: 'Checkout Developer Portal Scripts'
         uses: actions/checkout@v4
