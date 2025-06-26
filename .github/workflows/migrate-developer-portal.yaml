@@ -38,7 +38,6 @@ jobs:
         working-directory: ./portal-scripts
 
       - name: 'Capture Content from Source (Dev) APIM'
-        id: capture
         run: |
           node ./scripts3/capture.js \
             --subscriptionId "${{ fromJson(secrets.AZURE_CREDENTIALS).subscriptionId }}" \
