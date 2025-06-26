@@ -1,0 +1,30 @@
+{
+    "compilerOptions": {
+        "target": "ES2022",
+        "lib": [
+            "dom",
+            "ES2022",
+            "webworker"
+        ],
+        "module": "ES2022",
+        "moduleResolution": "node",
+        "removeComments": true,
+        "noLib": false,
+        "skipLibCheck": true,
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        "allowUnreachableCode": true,
+        "allowSyntheticDefaultImports": true,
+        "sourceMap": true,
+        "incremental": true,
+        "jsx": "react",
+        "resolveJsonModule": true
+    },
+    "include": [
+        "./src/**/*",
+        "./node_modules/@paperbits/**/*"
+    ],
+    "exclude": [
+        "./node_modules"
+    ]
+}
