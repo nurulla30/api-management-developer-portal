@@ -14,6 +14,9 @@ jobs:
   capture_from_dev:
     runs-on: ubuntu-latest
     environment: dev
+    permissions:
+      id-token: write
+      contents: read
     outputs:
       artifact_name: portal-content-${{ github.run_id }}
     steps:
@@ -60,6 +63,9 @@ jobs:
     needs: capture_from_dev
     runs-on: ubuntu-latest
     environment: ${{ github.event.inputs.target_environment }}
+    permissions:
+      id-token: write
+      contents: read
     steps:
       - name: 'Login to Azure'
         uses: azure/login@v1
@@ -103,3 +109,4 @@ jobs:
         run: |
           echo "Migration scripts completed successfully."
           echo "Please go to the Azure Portal for the destination APIM and publish the changes to make them live."
+
