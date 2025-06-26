@@ -10,6 +10,10 @@ on:
         options:
           - qa
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   capture_from_dev:
     runs-on: ubuntu-latest
@@ -24,7 +28,7 @@ jobs:
           client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-          auth-type: SERVICE_PRINCIPAL
+          auth-type: service-principal
 
       - name: 'Checkout Developer Portal Scripts'
         uses: actions/checkout@v4
@@ -69,7 +73,8 @@ jobs:
           client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-          
+          auth-type: service-principal
+
       - name: 'Checkout Developer Portal Scripts'
         uses: actions/checkout@v4
         with:
@@ -104,4 +109,3 @@ jobs:
         run: |
           echo "Migration scripts completed successfully."
           echo "Please go to the Azure Portal for the destination APIM and publish the changes to make them live."
-
