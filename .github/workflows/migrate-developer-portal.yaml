@@ -37,21 +37,28 @@ jobs:
         run: npm install
         working-directory: ./portal-scripts
 
+      - name: 'Debug: Show Directory Structure'
+        run: |
+          echo "Current working directory:"
+          pwd
+          echo "---"
+          echo "Full directory listing:"
+          ls -R
+
       - name: 'Capture Content from Source (Dev) APIM'
         id: capture
         run: |
-          node ./scripts/v3/capture.js \
+          node ./portal-scripts/scripts/v3/capture.js \
             --subscriptionId "${{ fromJson(secrets.AZURE_CREDENTIALS).subscriptionId }}" \
             --resourceGroupName "${{ secrets.RESOURCE_GROUP_NAME }}" \
             --serviceName "${{ secrets.APIM_SERVICE_NAME }}" \
             --folder "./dist"
-        working-directory: ./portal-scripts
-
+        
       - name: 'Upload Portal Artifact'
         uses: actions/upload-artifact@v4
         with:
           name: portal-content-${{ github.run_id }}
-          path: ./portal-scripts/dist
+          path: ./dist
 
   generate_to_target:
     needs: capture_from_dev
@@ -82,16 +89,23 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: ${{ needs.capture_from_dev.outputs.artifact_name }}
-          path: ./portal-scripts/dist
+          path: ./dist
+
+      - name: 'Debug: Show Directory Structure after Download'
+        run: |
+          echo "Current working directory:"
+          pwd
+          echo "---"
+          echo "Full directory listing:"
+          ls -R
 
       - name: 'Generate Content to Destination APIM'
         run: |
-          node ./scripts/v3/generate.js \
+          node ./portal-scripts/scripts/v3/generate.js \
             --subscriptionId "${{ fromJson(secrets.AZURE_CREDENTIALS).subscriptionId }}" \
             --resourceGroupName "${{ secrets.RESOURCE_GROUP_NAME }}" \
             --serviceName "${{ secrets.APIM_SERVICE_NAME }}" \
             --folder "./dist"
-        working-directory: ./portal-scripts
 
       - name: 'Final Step: Manual Publish Required'
         run: |
