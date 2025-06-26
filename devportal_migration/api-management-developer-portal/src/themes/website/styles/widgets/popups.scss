@@ -1,0 +1,37 @@
+.popup {
+    display: none;
+
+    &.show {
+        display: block;
+    }
+
+    .popup-backdrop {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 10000;
+    }
+
+    .popup-container {
+        z-index: 10001;
+        align-items: center;
+    }
+
+    .popup-close {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        border: none;
+        background: none;
+        z-index: 10002;
+    }
+}
+
+.popup-host {
+    display: block;
+    overflow: visible;
+    height: 0;
+    width: 100%;
+}

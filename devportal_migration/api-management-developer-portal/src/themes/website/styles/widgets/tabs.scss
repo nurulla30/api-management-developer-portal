@@ -1,0 +1,23 @@
+.tab-panel {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+
+    .tab-navs {
+        display: flex;
+
+        .nav-link-active {
+            font-weight: bold;
+        }
+    }
+
+    .tab-content {
+        display: none;
+        flex-grow: 1;
+
+        &.tab-content-active {
+            display: flex;
+        }
+    }
+}

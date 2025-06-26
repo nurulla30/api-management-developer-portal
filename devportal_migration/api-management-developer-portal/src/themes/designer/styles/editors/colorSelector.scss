@@ -1,0 +1,61 @@
+
+.pseudo-transparent-bckg {
+    position: relative;
+    overflow: hidden;
+    @include pseudo-transparent-bckg();
+}
+
+.palette {
+    list-style: none;
+    padding: 0;
+    max-width: 250px;
+
+    .color-box {
+        float: left;
+        position: relative;
+        cursor: pointer;
+
+        &.selected:before {
+            position: absolute;
+            content: "";
+            border: 2px solid #4c5866;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            pointer-events: none;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        &:focus,
+        &:hover {
+            outline: none;
+            @include selection(10px);
+        }
+
+        .color-box-wrapper {
+            position: relative;
+            display: block;
+            border: 0.2px solid #ccc;
+            border-radius: 50%;
+            box-shadow: inset 1px 1px 1px 0 rgba(0, 0, 0, 0.3);
+            width: 30px;
+            height: 30px;
+            margin: 10px;
+            padding: 0;
+            line-height: 30px;
+            overflow: hidden;
+
+            &.pseudo-transparent-bckg {
+                @include pseudo-transparent-bckg();
+            }
+        }
+
+        .color {
+            @include fit();
+            display: block;
+            text-align: center;
+        }
+    }
+}

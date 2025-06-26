@@ -1,0 +1,18 @@
+.list {
+    .list-item {
+        padding: .5em;
+        display: block;
+        color: $default-text-color;
+        cursor: pointer;
+
+        &.selected {
+            font-weight: bold;
+        }
+    }
+
+    .list-item-empty {
+        padding: 10px;
+        display: block;
+        color: $default-text-color;
+    }
+}

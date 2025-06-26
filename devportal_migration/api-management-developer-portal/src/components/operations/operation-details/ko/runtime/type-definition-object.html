@@ -1,0 +1,78 @@
+<!-- ko if: properties.length > 0 -->
+
+<div role="table" class="table-preset table-preset-schema" data-bind="css: {'table-preset-schema-examples': $component.showExamples, 'table-preset-schema-readonly': readOnly}">
+    <div class="d-contents" role="rowgroup">
+        <div class="d-contents" role="row">
+            <div role="columnheader" class="table-preset-head text-truncate">Name</div>
+            <div role="columnheader" class="table-preset-head text-truncate">Required</div>
+            <!-- ko if: readOnly -->
+            <div role="columnheader" class="table-preset-head text-truncate">Read-only</div>
+            <!-- /ko -->
+            <div role="columnheader" class="table-preset-head text-truncate">Type</div>
+            <!-- ko if: $component.showExamples -->
+            <div role="columnheader" class="table-preset-head text-truncate">Example</div>
+            <!-- /ko -->
+            <div role="columnheader" class="table-preset-head">Description</div>
+        </div>
+    </div>
+    <div class="d-contents" role="rowgroup">
+        <!-- ko foreach: { data: properties, as: 'property' } -->
+        <div class="d-contents" role="row">
+            <div role="cell" class="text-truncate" data-bind="text: property.name, attr: { title: property.name }">
+                <span class="text-monospace" data-bind="text: property.name, attr: { title: property.name }"></span>
+            </div>
+            <div role="cell" data-bind="text: property.required"></div>
+            <!-- ko if: $parent.readOnly -->
+            <div role="cell" data-bind="text: property.readOnly"></div>
+            <!-- /ko -->
+            <div role="cell" class="text-truncate">
+                <!-- ko if: property.type.displayAs === 'primitive' -->
+                <span class="text-monospace"
+                    data-bind="text: property.type.name, attr: { title: property.type.name }"></span>
+                <!-- /ko -->
+
+                <!-- ko if: property.type.displayAs === 'arrayOfPrimitive' -->
+                <span class="text-monospace"
+                    data-bind="text: property.type.name, attr: { title: property.type.name }"></span>[]
+                <!-- /ko -->
+
+                <!-- ko if: property.type.displayAs === 'reference' -->
+                <a class="text-monospace"
+                    data-bind="text: property.type.name, attr: { href: $component.getReferenceUrl(property.type.name), title: property.type.name }"></a>
+                <!-- /ko -->
+
+                <!-- ko if: property.type.displayAs === 'arrayOfReference' -->
+                <a class="text-monospace"
+                    data-bind="text: property.type.name, attr: { href: $component.getReferenceUrl(property.type.name), title: property.type.name }"></a>[]
+                <!-- /ko -->
+
+                <!-- ko if: property.type.displayAs === 'combination' -->
+                <div>
+                    <span data-bind="text: property.type.combinationType"></span>:
+                </div>
+                <!-- ko foreach: { data: property.type.combination, as: 'item' } -->
+                <!-- ko if: $index() > 0 -->,<br>
+                <!-- /ko -->
+                <!-- ko if: item.displayAs === 'reference' -->
+                <a class="text-monospace"
+                    data-bind="text: item.name, attr: { href: $component.getReferenceUrl(item.name), title: item.name }"></a>
+                <!-- /ko -->
+
+                <!-- ko if: item.displayAs === 'primitive' -->
+                <span class="text-monospace" data-bind="text: item.name, attr: { title: item.name }"></span>
+                <!-- /ko -->
+
+                <!-- /ko -->
+
+                <!-- /ko -->
+            </div>
+            <!-- ko if: $component.showExamples -->
+            <div role="cell" class="text-truncate" data-bind="text: property.example, attr: {title: property.example}"></div>
+            <!-- /ko -->
+            <div role="cell" data-bind="markdown: property.description"></div>
+        </div>
+        <!-- /ko -->
+    </div>
+</div>
+
+<!-- /ko -->

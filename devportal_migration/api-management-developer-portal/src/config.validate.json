@@ -1,0 +1,13 @@
+{
+    "environment": "validation",
+    "isLocalRun": true,
+    "root": "http://localhost:8080",
+    "urls": {
+        "home": "/",
+        "signin": "/signin",
+        "signup": "/signup",
+        "profile": "/profile",
+        "products": "/products",
+        "apis": "/apis"
+    }
+}

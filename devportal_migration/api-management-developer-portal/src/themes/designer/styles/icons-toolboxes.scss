@@ -1,0 +1,170 @@
+.paperbits-icon {
+    display: inline-block;
+    font: normal normal normal 1em/1 "paperbits";
+    font-size: 1.1em;
+    line-height: inherit;
+    text-transform: none;
+    flex-shrink: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* size examples - relative units */
+.paperbits-sm {
+    font-size: 0.8em;
+}
+
+.paperbits-lg {
+    font-size: 1.2em;
+}
+
+/* size examples - absolute units */
+.paperbits-16 {
+    font-size: 16px;
+}
+
+.paperbits-32 {
+    font-size: 32px;
+}
+
+/* rotate the icon infinitely */
+.paperbits-is-spinning {
+    animation: paperbits-spin 1s infinite linear;
+}
+
+@keyframes paperbits-spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* transform */
+.paperbits-rotate-90 {
+    transform: rotate(90deg);
+}
+
+.paperbits-rotate-180 {
+    transform: rotate(180deg);
+}
+
+.paperbits-rotate-270 {
+    transform: rotate(270deg);
+}
+
+.paperbits-flip-y {
+    transform: scaleY(-1);
+}
+
+.paperbits-flip-x {
+    transform: scaleX(-1);
+}
+
+/* icons */
+$icons: (
+    "layout-11": "ea03",
+    "align-center": "ea09",
+    "align-justify": "ea0a",
+    "align-left-2": "ea0b",
+    "align-right-2": "ea0c",
+    "size": "ea0d",
+    "edit-2": "ea0e",
+    "code": "ea0f",
+    "list-bullet": "ea10",
+    "list-numbers": "ea11",
+    "bold": "ea12",
+    "alert-circle-i": "ea17",
+    "chat-45-2": "ea18",
+    "drop": "ea1a",
+    "m-location": "ea1d",
+    "mobile": "ea1f",
+    "desktop-screen": "ea20",
+    "mobile-landscape": "ea22",
+    "tablet-2": "ea24",
+    "wifi-off": "ea25",
+    "wifi": "ea26",
+    "ban": "ea27",
+    "single-content-03": "ea28",
+    "single-copy-04": "ea29",
+    "mirror-2": "ea2b",
+    "image-2": "ea31",
+    "paint-bucket-40": "ea32",
+    "palette": "ea33",
+    "menu-34": "ea36",
+    "check-2": "ea38",
+    "preferences-circle": "ea39",
+    "underline": "ea3a",
+    "link-69-2": "ea3d",
+    "color": "ea3f",
+    "anchor": "ea40",
+    "italic": "ea41",
+    "square-upload": "ea42",
+    "square-download": "ea43",
+    "simple-add": "ea44",
+    "simple-remove": "ea45",
+    "circle-delete": "ea47",
+    "circle-add": "ea48",
+    "enlarge-circle": "ea4a",
+    "align-bottom": "ea4c",
+    "align-right": "ea4d",
+    "align-top": "ea4e",
+    "align-center-horizontal": "ea4f",
+    "align-center-vertical": "ea50",
+    "align-left": "ea51",
+    "disperse": "ea52",
+    "zoom-out": "ea53",
+    "zoom-in": "ea54",
+    "trash-simple": "ea55",
+    "edit-72": "ea56",
+    "form": "ea57",
+    "zoom-99": "ea58",
+    "crop": "ea59",
+    "enlarge-vertical": "ea5a",
+    "enlarge-horizontal": "ea5b",
+    "rotate-right-2": "ea5c",
+    "rotate-left-2": "ea5d",
+    "margin-right": "ea5e",
+    "margin-left": "ea5f",
+    "alert": "ea60",
+    "at-sign": "ea63",
+    "gradient": "ea64",
+    "polaroid": "ea65",
+    "marker-2": "ea67",
+    "undo-25": "ea68",
+    "redo-26": "ea69",
+    "floppy-disk": "ea6a",
+    "upload": "ea6b",
+    "world": "ea6e",
+    "wireframe": "ea6f",
+    "send": "ea70",
+    "c-question": "ea71",
+    "layout-11-2": "ea73",
+    "clapperboard": "ea75",
+    "single-02": "ea76",
+    "lightning": "ea77",
+    "l-search": "ea78",
+    "small-down": "ea79",
+    "small-up": "ea7a",
+    "menu-4": "ea7b",
+    "tablet-2-2": "ea7c",
+    "strikethrough": "ea7d",
+    "divider": "ea7e",
+    "s-add": "ea7f",
+    "curved-arrow-left": "ea80",
+    "puzzle-10": "ea81",
+    "a-security": "ea82",
+    "arrow-up": "ea83",
+    "arrow-down": "ea84",
+);
+
+@function unicode($str) {
+    @return unquote('"\\#{$str}"');
+}
+
+@each $name, $code in $icons {
+    .paperbits-#{"" + $name}::before {
+        content: unicode($code);
+    }
+}
