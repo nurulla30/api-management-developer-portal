@@ -42,33 +42,13 @@ jobs:
         run: pip install -r requirements.txt
         working-directory: ${{ github.workspace }}/python_migration
 
-      - name: 'Create .env.source file for Capture'
-        run: |
-          SOURCE_SUBSCRIPTION_ID="${{ fromJson(secrets.AZURE_CREDENTIALS).subscriptionId }}"
-          SOURCE_RESOURCE_GROUP_NAME=""
-          SOURCE_SERVICE_NAME=""
-
-          if [[ "${{ github.event.inputs.source_environment }}" == "dev" ]]; then
-            SOURCE_RESOURCE_GROUP_NAME="${{ secrets.RESOURCE_GROUP_NAME_DEV }}"
-            SOURCE_SERVICE_NAME="${{ secrets.APIM_SERVICE_NAME_DEV }}"
-          elif [[ "${{ github.event.inputs.source_environment }}" == "qa" ]]; then
-            SOURCE_RESOURCE_GROUP_NAME="${{ secrets.RESOURCE_GROUP_NAME_QA }}"
-            SOURCE_SERVICE_NAME="${{ secrets.APIM_SERVICE_NAME_QA }}"
-          elif [[ "${{ github.event.inputs.source_environment }}" == "prod" ]]; then
-            SOURCE_RESOURCE_GROUP_NAME="${{ secrets.RESOURCE_GROUP_NAME_PROD }}"
-            SOURCE_SERVICE_NAME="${{ secrets.APIM_SERVICE_NAME_PROD }}"
-          fi
-
-          echo "SUBSCRIPTION_ID=$SOURCE_SUBSCRIPTION_ID" > ${{ github.workspace }}/python_migration/.env.source
-          echo "RESOURCE_GROUP_NAME=$SOURCE_RESOURCE_GROUP_NAME" >> ${{ github.workspace }}/python_migration/.env.source
-          echo "SERVICE_NAME=$SOURCE_SERVICE_NAME" >> ${{ github.workspace }}/python_migration/.env.source
-        working-directory: ${{ github.workspace }}/python_migration
+      
 
       - name: 'Capture Content from Source (Dev) APIM'
         run: |
           python ${{ github.workspace }}/python_migration/capture.py \
             --folder "${{ github.workspace }}/dist" \
-            --env-file "${{ github.workspace }}/python_migration/.env.source"
+            --env-file "${{ github.workspace }}/python_migration/.env.${{ github.event.inputs.source_environment }}"
         
       - name: 'Upload Portal Artifact'
         uses: actions/upload-artifact@v4
