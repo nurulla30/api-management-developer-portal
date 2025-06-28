@@ -1,0 +1,123 @@
+name: Migrate Developer Portal (Dev to QA) - Python
+
+on:
+  workflow_dispatch:
+    inputs:
+      source_environment:
+        description: 'Choose the source environment'
+        required: true
+        type: choice
+        options:
+          - dev
+          - qa
+          - prod
+      target_environment:
+        description: 'Choose the destination environment'
+        required: true
+        type: choice
+        options:
+          - qa
+
+jobs:
+  capture_from_source:
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.source_environment }}
+    outputs:
+      artifact_name: portal-content-${{ github.run_id }}
+    steps:
+      - name: 'Checkout Unified Repository'
+        uses: actions/checkout@v4
+
+      - name: 'Login to Azure'
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: 'Setup Python'
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: 'Install Dependencies'
+        run: pip install -r requirements.txt
+        working-directory: ${{ github.workspace }}/python_migration
+
+      - name: 'Create .env.source file for Capture'
+        run: |
+          SOURCE_SUBSCRIPTION_ID="${{ fromJson(secrets.AZURE_CREDENTIALS).subscriptionId }}"
+          SOURCE_RESOURCE_GROUP_NAME=""
+          SOURCE_SERVICE_NAME=""
+
+          if [[ "${{ github.event.inputs.source_environment }}" == "dev" ]]; then
+            SOURCE_RESOURCE_GROUP_NAME="${{ secrets.RESOURCE_GROUP_NAME_DEV }}"
+            SOURCE_SERVICE_NAME="${{ secrets.APIM_SERVICE_NAME_DEV }}"
+          elif [[ "${{ github.event.inputs.source_environment }}" == "qa" ]]; then
+            SOURCE_RESOURCE_GROUP_NAME="${{ secrets.RESOURCE_GROUP_NAME_QA }}"
+            SOURCE_SERVICE_NAME="${{ secrets.APIM_SERVICE_NAME_QA }}"
+          elif [[ "${{ github.event.inputs.source_environment }}" == "prod" ]]; then
+            SOURCE_RESOURCE_GROUP_NAME="${{ secrets.RESOURCE_GROUP_NAME_PROD }}"
+            SOURCE_SERVICE_NAME="${{ secrets.APIM_SERVICE_NAME_PROD }}"
+          fi
+
+          echo "SUBSCRIPTION_ID=$SOURCE_SUBSCRIPTION_ID" > ${{ github.workspace }}/python_migration/.env.source
+          echo "RESOURCE_GROUP_NAME=$SOURCE_RESOURCE_GROUP_NAME" >> ${{ github.workspace }}/python_migration/.env.source
+          echo "SERVICE_NAME=$SOURCE_SERVICE_NAME" >> ${{ github.workspace }}/python_migration/.env.source
+        working-directory: ${{ github.workspace }}/python_migration
+
+      - name: 'Capture Content from Source (Dev) APIM'
+        run: |
+          python ${{ github.workspace }}/python_migration/capture.py \
+            --folder "${{ github.workspace }}/dist" \
+            --env-file "${{ github.workspace }}/python_migration/.env.source"
+        
+      - name: 'Upload Portal Artifact'
+        uses: actions/upload-artifact@v4
+        with:
+          name: portal-content-${{ github.run_id }}
+          path: ${{ github.workspace }}/dist/
+
+  generate_to_target:
+    needs: capture_from_source
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.target_environment }}
+    steps:
+      - name: 'Checkout Unified Repository'
+        uses: actions/checkout@v4
+
+      - name: 'Login to Azure'
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          
+      - name: 'Setup Python'
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: 'Download Portal Artifact'
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ needs.capture_from_dev.outputs.artifact_name }}
+          path: ${{ github.workspace }}/dist/
+
+      - name: 'Install Dependencies'
+        run: pip install -r requirements.txt
+        working-directory: ${{ github.workspace }}/python_migration
+
+      - name: 'Create .env.destination file for Generate'
+        run: |
+          echo "SUBSCRIPTION_ID=${{ fromJson(secrets.AZURE_CREDENTIALS).subscriptionId }}" > ${{ github.workspace }}/python_migration/.env.destination
+          echo "RESOURCE_GROUP_NAME=${{ secrets.RESOURCE_GROUP_NAME_TARGET }}" >> ${{ github.workspace }}/python_migration/.env.destination
+          echo "SERVICE_NAME=${{ secrets.APIM_SERVICE_NAME_TARGET }}" >> ${{ github.workspace }}/python_migration/.env.destination
+        working-directory: ${{ github.workspace }}/python_migration
+
+      - name: 'Generate Content to Destination APIM'
+        run: |
+          python ${{ github.workspace }}/python_migration/generate.py \
+            --folder "${{ github.workspace }}/dist" \
+            --env-file "${{ github.workspace }}/python_migration/.env.destination"
+
+      - name: 'Final Step: Manual Publish Required'
+        run: |
+          echo "Migration scripts completed successfully."
+          echo "Please go to the Azure Portal for the destination APIM and publish the changes to make them live."
