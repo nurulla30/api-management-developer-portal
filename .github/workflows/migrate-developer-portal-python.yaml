@@ -84,32 +84,13 @@ jobs:
         run: pip install -r requirements.txt
         working-directory: ${{ github.workspace }}/python_migration
 
-      - name: 'Create .env.destination file for Generate'
-        run: |
-          TARGET_SUBSCRIPTION_ID="${{ fromJson(secrets.AZURE_CREDENTIALS).subscriptionId }}"
-          TARGET_RESOURCE_GROUP_NAME="${{ secrets.RESOURCE_GROUP_NAME_TARGET }}"
-          TARGET_SERVICE_NAME="${{ secrets.APIM_SERVICE_NAME_TARGET }}"
-
-          if [[ -z "$TARGET_RESOURCE_GROUP_NAME" || -z "$TARGET_SERVICE_NAME" ]]; then
-            echo "Error: RESOURCE_GROUP_NAME_TARGET or APIM_SERVICE_NAME_TARGET is empty for target environment '${{ github.event.inputs.target_environment }}'."
-            echo "Please ensure the corresponding GitHub secrets (RESOURCE_GROUP_NAME_TARGET, APIM_SERVICE_NAME_TARGET) are set correctly."
-            exit 1
-          fi
-
-          echo "SUBSCRIPTION_ID=$TARGET_SUBSCRIPTION_ID" > ${{ github.workspace }}/python_migration/.env.destination
-          echo "RESOURCE_GROUP_NAME=$TARGET_RESOURCE_GROUP_NAME" >> ${{ github.workspace }}/python_migration/.env.destination
-          echo "SERVICE_NAME=$TARGET_SERVICE_NAME" >> ${{ github.workspace }}/python_migration/.env.destination
-        working-directory: ${{ github.workspace }}/python_migration
-
-      - name: 'Debug: Print .env.destination content'
-        run: cat ${{ github.workspace }}/python_migration/.env.destination
-        working-directory: ${{ github.workspace }}/python_migration
+      
 
       - name: 'Generate Content to Destination APIM'
         run: |
           python ${{ github.workspace }}/python_migration/generate.py \
             --folder "${{ github.workspace }}/dist" \
-            --env-file "${{ github.workspace }}/python_migration/.env.destination"
+            --env-file "${{ github.workspace }}/python_migration/.env.${{ github.event.inputs.target_environment }}"
 
       - name: 'Final Step: Manual Publish Required'
         run: |
