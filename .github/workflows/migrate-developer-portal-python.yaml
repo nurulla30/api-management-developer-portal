@@ -16,7 +16,9 @@ on:
         required: true
         type: choice
         options:
+          - dev
           - qa
+          - prod
 
 jobs:
   capture_from_source:
