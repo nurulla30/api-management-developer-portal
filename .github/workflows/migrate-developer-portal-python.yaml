@@ -77,7 +77,7 @@ jobs:
       - name: 'Download Portal Artifact'
         uses: actions/download-artifact@v4
         with:
-          name: ${{ needs.capture_from_dev.outputs.artifact_name }}
+          name: ${{ needs.capture_from_source.outputs.artifact_name }}
           path: ${{ github.workspace }}/dist/
 
       - name: 'Install Dependencies'
