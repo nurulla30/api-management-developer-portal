@@ -26,7 +26,7 @@ on:
 
 jobs:
   capture_from_source:
-    name: "Capture from ${{ github.event.inputs.source_environment | upper }}"
+    name: "Capture from ${{ github.event.inputs.source_environment }}"
     runs-on: ubuntu-latest
     environment: ${{ github.event.inputs.source_environment }}
     outputs:
@@ -49,7 +49,7 @@ jobs:
         run: pip install -r requirements.txt
         working-directory: ${{ github.workspace }}/python_migration
 
-      - name: 'Capture content from ${{ github.event.inputs.source_environment | upper }} environment'
+      - name: 'Capture content from ${{ github.event.inputs.source_environment }} environment'
         run: |
           python ${{ github.workspace }}/python_migration/capture.py \
             --folder "${{ github.workspace }}/dist" \
@@ -62,7 +62,7 @@ jobs:
           path: ${{ github.workspace }}/dist/
 
   generate_to_target:
-    name: "Generate to ${{ github.event.inputs.target_environment | upper }}"
+    name: "Generate to ${{ github.event.inputs.target_environment }}"
     needs: capture_from_source
     runs-on: ubuntu-latest
     environment: ${{ github.event.inputs.target_environment }}
@@ -90,13 +90,13 @@ jobs:
         run: pip install -r requirements.txt
         working-directory: ${{ github.workspace }}/python_migration
 
-      - name: 'Generate content to ${{ github.event.inputs.target_environment | upper }} environment'
+      - name: 'Generate content to ${{ github.event.inputs.target_environment }} environment'
         run: |
           python ${{ github.workspace }}/python_migration/generate.py \
             --folder "${{ github.workspace }}/dist" \
             --env-file "${{ github.workspace }}/python_migration/.env.${{ github.event.inputs.target_environment }}"
 
-      - name: 'Publish Developer Portal to ${{ github.event.inputs.target_environment | upper }}'
+      - name: 'Publish Developer Portal to ${{ github.event.inputs.target_environment }}'
         id: publish
         run: |
           ENV_FILE="${{ github.workspace }}/python_migration/.env.${{ github.event.inputs.target_environment }}"
@@ -121,4 +121,3 @@ jobs:
             --body "{\"properties\": {\"description\": \"${PUBLISH_DESCRIPTION}\", \"isCurrent\": true}}"
           
           echo "Publish command initiated for revision ${PORTAL_REVISION_TO_PUBLISH}. Please allow a few minutes for changes to propagate."
-          echo "You can check the status in the Azure portal under Developer portal -> Portal overview -> Revisions tab."
