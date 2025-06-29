@@ -101,10 +101,13 @@ class PortalMigrator:
         blob_storage_url = self.get_storage_sas_url()
         container_client = ContainerClient.from_container_url(blob_storage_url)
         
+        print("Uploading media files...")
         for file_path in self.list_files_in_directory(snapshot_media_folder):
             blob_name = os.path.relpath(file_path, snapshot_media_folder)
+            print(f"  - {blob_name}")
             with open(file_path, "rb") as data:
                 container_client.upload_blob(name=blob_name, data=data, overwrite=True)
+        print("Uploading media files complete.")
 
     def capture_content(self):
         result = {}
@@ -124,8 +127,11 @@ class PortalMigrator:
         with open(snapshot_file_path, "r") as f:
             data = json.load(f)
         
+        print("Generating content items...")
         for key, value in data.items():
+            print(f"  - {key}")
             self.http_client.send_request("PUT", key, value)
+        print("Generating content items complete.")
 
     def export_portal(self):
         print("Exporting portal...")

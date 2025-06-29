@@ -94,11 +94,7 @@ jobs:
             --folder "${{ github.workspace }}/dist" \
             --env-file "${{ github.workspace }}/python_migration/.env.${{ github.event.inputs.target_environment }}"
 
-      - name: 'Publish Developer Portal'
+      - name: 'Final Step: Manual Publish Required'
         run: |
-          TARGET_SERVICE_NAME=$(grep "^SERVICE_NAME=" ${{ github.workspace }}/python_migration/.env.${{ github.event.inputs.target_environment }} | cut -d '=' -f2)
-          az rest --method post --uri "https://$TARGET_SERVICE_NAME.developer.azure-api.net/publish"
-
-      - name: 'Final Step: Migration and Publish Completed'
-        run: |
-          echo "Migration scripts completed successfully and developer portal has been published."
+          echo "Migration scripts completed successfully."
+          echo "Please go to the Azure Portal for the destination APIM and publish the changes to make them live."
