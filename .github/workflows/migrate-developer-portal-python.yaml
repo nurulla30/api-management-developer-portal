@@ -109,7 +109,12 @@ jobs:
           API_VERSION="2024-05-01"
           
           PORTAL_REVISION_TO_PUBLISH=$(date -u +"%Y%m%d%H%M%S")
-          PUBLISH_DESCRIPTION="${{ github.event.inputs.publish_description || format('Publishing revision {0}', PORTAL_REVISION_TO_PUBLISH) }}"
+
+          if [ -z "${{ github.event.inputs.publish_description }}" ]; then
+            PUBLISH_DESCRIPTION="Publishing revision ${PORTAL_REVISION_TO_PUBLISH}"
+          else
+            PUBLISH_DESCRIPTION="${{ github.event.inputs.publish_description }}"
+          fi
           
           echo "Attempting to publish developer portal revision: ${PORTAL_REVISION_TO_PUBLISH}"
           
