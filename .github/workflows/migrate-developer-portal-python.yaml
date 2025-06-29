@@ -19,6 +19,10 @@ on:
           - dev
           - qa
           - prod
+      publish_description:
+        description: 'Enter a description for the publish action'
+        required: false
+        type: string
 
 jobs:
   capture_from_source:
@@ -105,12 +109,13 @@ jobs:
           API_VERSION="2024-05-01"
           
           PORTAL_REVISION_TO_PUBLISH=$(date -u +"%Y%m%d%H%M%S")
+          PUBLISH_DESCRIPTION="${{ github.event.inputs.publish_description || format('Publishing revision {0}', PORTAL_REVISION_TO_PUBLISH) }}"
           
           echo "Attempting to publish developer portal revision: ${PORTAL_REVISION_TO_PUBLISH}"
           
           az rest --method put \
             --uri "https://management.azure.com/subscriptions/${SUBSCRIPTION_ID}/resourceGroups/${RESOURCE_GROUP_NAME}/providers/Microsoft.ApiManagement/service/${SERVICE_NAME}/portalRevisions/${PORTAL_REVISION_TO_PUBLISH}?api-version=${API_VERSION}" \
-            --body "{\"properties\": {\"description\": \"Publishing revision ${PORTAL_REVISION_TO_PUBLISH}\", \"isCurrent\": true}}"
+            --body "{\"properties\": {\"description\": \"${PUBLISH_DESCRIPTION}\", \"isCurrent\": true}}"
           
           echo "Publish command initiated for revision ${PORTAL_REVISION_TO_PUBLISH}. Please allow a few minutes for changes to propagate."
           echo "You can check the status in the Azure portal under Developer portal -> Portal overview -> Revisions tab."
