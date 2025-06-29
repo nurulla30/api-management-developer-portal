@@ -1,4 +1,4 @@
-name: Migrate Developer Portal - Python
+name: Migrate Developer Portal - UI
 
 on:
   workflow_dispatch:
