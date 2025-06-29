@@ -94,7 +94,25 @@ jobs:
             --folder "${{ github.workspace }}/dist" \
             --env-file "${{ github.workspace }}/python_migration/.env.${{ github.event.inputs.target_environment }}"
 
-      - name: 'Final Step: Manual Publish Required'
+      - name: 'Publish Developer Portal'
+        id: publish
         run: |
-          echo "Migration scripts completed successfully."
-          echo "Please go to the Azure Portal for the destination APIM and publish the changes to make them live."
+          ENV_FILE="${{ github.workspace }}/python_migration/.env.${{ github.event.inputs.target_environment }}"
+          
+          RESOURCE_GROUP_NAME=$(grep -oP '(?<=RESOURCE_GROUP_NAME=).*' "$ENV_FILE")
+          SERVICE_NAME=$(grep -oP '(?<=SERVICE_NAME=).*' "$ENV_FILE")
+          SUBSCRIPTION_ID=$(grep -oP '(?<=SUBSCRIPTION_ID=).*' "$ENV_FILE")
+          API_VERSION="2024-05-01"
+          
+          PORTAL_REVISION_TO_PUBLISH=$(date -u +"%Y%m%d%H%M%S")
+          
+          echo "Attempting to publish developer portal revision: ${PORTAL_REVISION_TO_PUBLISH}"
+          
+          az rest --method put \
+            --uri "https://management.azure.com/subscriptions/${SUBSCRIPTION_ID}/resourceGroups/${RESOURCE_GROUP_NAME}/providers/Microsoft.ApiManagement/service/${SERVICE_NAME}/portalRevisions/${PORTAL_REVISION_TO_PUBLISH}?api-version=${API_VERSION}" \
+            --body "{\"properties\": {\"description\": \"Publishing revision ${PORTAL_REVISION_TO_PUBLISH}\", \"isCurrent\": true}}"
+          
+          echo "Publish command initiated for revision ${PORTAL_REVISION_TO_PUBLISH}. Please allow a few minutes for changes to propagate."
+          echo "You can check the status in the Azure portal under Developer portal -> Portal overview -> Revisions tab."
+
+      
