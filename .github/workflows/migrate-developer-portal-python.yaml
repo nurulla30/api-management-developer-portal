@@ -25,8 +25,7 @@ on:
         type: string
 
 jobs:
-  capture_from_env:
-    name: Capture from ${{ github.event.inputs.source_environment }}
+  capture_from_source:
     runs-on: ubuntu-latest
     environment: ${{ github.event.inputs.source_environment }}
     outputs:
@@ -63,9 +62,8 @@ jobs:
           name: portal-content-${{ github.run_id }}
           path: ${{ github.workspace }}/dist/
 
-  generate_to_env:
-    name: Generate to ${{ github.event.inputs.target_environment }}
-    needs: capture_from_env
+  generate_to_target:
+    needs: capture_from_source
     runs-on: ubuntu-latest
     environment: ${{ github.event.inputs.target_environment }}
     steps:
