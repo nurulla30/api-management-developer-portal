@@ -62,7 +62,7 @@ jobs:
           path: ${{ github.workspace }}/dist/
 
   generate_to_target:
-    name: "Generate to ${{ github.event.inputs.target_environment }}"
+    name: "Migrate to ${{ github.event.inputs.target_environment }}"
     needs: capture_from_source
     runs-on: ubuntu-latest
     environment: ${{ github.event.inputs.target_environment }}
